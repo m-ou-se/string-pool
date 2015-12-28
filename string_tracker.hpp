@@ -66,7 +66,7 @@ public:
 	string_builder builder() { return string_builder{*this}; }
 
 private:
-	string_pool<string_tracker_detail::source_origin, std::string> pool;
+	string_pool<string_tracker_detail::source_origin> pool;
 
 	string_tracker_detail::source_origin origin(string_view s) const;
 };
