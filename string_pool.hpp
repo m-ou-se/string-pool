@@ -1,35 +1,48 @@
 #pragma once
 
-#include <iterator>
 #include <map>
-#include <vector>
+#include <string>
 
 #include "optional.hpp"
 #include "string_view.hpp"
 
-template<typename T, typename C = char>
+namespace string_pool_detail {
+
+	template<typename T>
+	inline void prevent_sso(std::basic_string<T> &s) {
+		s.reserve(sizeof(s));
+	}
+
+	inline void prevent_sso(...) {}
+
+}
+
+template<
+	typename M,
+	typename S = std::string,
+	typename V = basic_string_view<typename S::value_type>
+>
 class string_pool {
 public:
-	using entry = std::pair<std::vector<C>, T>;
-	using string_view = basic_string_view<C>;
+	using metadata = M;
+	using entry = std::pair<S, M>;
+	using string = S;
+	using view = V;
 
-	string_view put(std::vector<C> s, T metadata) {
-		return put({std::move(s), std::move(metadata)});
+	view put(string s, metadata m) {
+		string_pool_detail::prevent_sso(s);
+		view v(s.data(), s.size());
+		pool_.emplace(v.data(), entry{std::move(s), std::move(m)});
+		return v;
 	}
 
-	string_view put(entry e) {
-		string_view s(e.first.data(), e.first.size());
-		pool_.emplace(s.data(), std::move(e));
-		return s;
-	}
-
-	entry const *get(string_view s) const {
+	entry const *get(view s) const {
 		auto i = lookup(s);
 		if (i == pool_.end()) return nullptr;
 		return &i->second;
 	}
 
-	optional<entry> take(string_view s) {
+	optional<entry> take(view s) {
 		auto i = lookup(s);
 		if (i == pool_.end()) return {};
 		entry e = std::move(i->second);
@@ -38,10 +51,11 @@ public:
 	}
 
 private:
-	std::map<C const *, entry> pool_;
+	using pool_type_ = std::map<typename string::const_pointer, entry>;
 
-	typename std::map<C const *, entry>::const_iterator
-	lookup(string_view s) const {
+	pool_type_ pool_;
+
+	typename pool_type_::const_iterator lookup(view s) const {
 		auto i = pool_.upper_bound(s.data());
 		if (i == pool_.begin()) return pool_.end();
 		--i;

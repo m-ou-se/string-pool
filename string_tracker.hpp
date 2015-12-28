@@ -68,7 +68,7 @@ public:
 	string_builder builder() { return string_builder{*this}; }
 
 private:
-	string_pool<source_origin> pool;
+	string_pool<source_origin, std::vector<char>> pool;
 
 	string_view add(std::vector<char> buffer, source_origin);
 
