@@ -37,11 +37,8 @@ struct source_origin {
 
 class string_tracker {
 public:
-	string_view add(std::vector<char>, source_location = {});
-	string_view add(std::vector<char>, string_view derived_from);
-
-	string_view add_copy(string_view, source_location = {});
-	string_view add_copy(string_view, string_view derived_from);
+	string_view add(std::string, source_location = {});
+	string_view add(std::string, string_view derived_from);
 
 	optional<string_view> add_file(string_view file_name);
 
@@ -57,7 +54,7 @@ public:
 
 	private:
 		string_tracker &tracker;
-		std::vector<char> buffer;
+		std::string buffer;
 		source_map origin;
 
 		explicit string_builder(string_tracker &tracker) : tracker(tracker) {}
@@ -68,9 +65,9 @@ public:
 	string_builder builder() { return string_builder{*this}; }
 
 private:
-	string_pool<source_origin, std::vector<char>> pool;
+	string_pool<source_origin, std::string> pool;
 
-	string_view add(std::vector<char> buffer, source_origin);
+	string_view add(std::string buffer, source_origin);
 
 	source_origin origin(string_view s) const;
 };

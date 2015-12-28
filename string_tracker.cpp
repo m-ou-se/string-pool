@@ -55,24 +55,16 @@ source_origin advance(source_origin const &origin, string_view s) {
 	}
 }
 
-string_view string_tracker::add(std::vector<char> buffer, source_location origin) {
+string_view string_tracker::add(std::string buffer, source_location origin) {
 	return pool.put(std::move(buffer), std::move(origin));
 }
 
-string_view string_tracker::add(std::vector<char> buffer, string_view origin) {
+string_view string_tracker::add(std::string buffer, string_view origin) {
 	return pool.put(std::move(buffer), source_map{{{0, origin}}});
 }
 
-string_view string_tracker::add(std::vector<char> buffer, source_origin origin) {
+string_view string_tracker::add(std::string buffer, source_origin origin) {
 	return pool.put(std::move(buffer), std::move(origin));
-}
-
-string_view string_tracker::add_copy(string_view s, source_location origin) {
-	return add(std::vector<char>(s.begin(), s.end()), std::move(origin));
-}
-
-string_view string_tracker::add_copy(string_view s, string_view origin) {
-	return add(std::vector<char>(s.begin(), s.end()), source_map{{{0, origin}}});
 }
 
 source_origin string_tracker::origin(string_view s) const {
@@ -92,18 +84,15 @@ source_location string_tracker::location(string_view s) const {
 }
 
 optional<string_view> string_tracker::add_file(string_view file_name) {
-	std::ifstream file{std::string{file_name.begin(), file_name.end()}};
+	std::ifstream file{file_name.to_string()};
 	file.seekg(0, std::ios_base::end);
 	std::ifstream::pos_type file_size = file.tellg();
-	std::vector<char> contents;
+	std::string contents;
 	if (file_size != std::ifstream::pos_type(-1)) contents.reserve(file_size);
 	file.seekg(0, std::ios_base::beg);
 	contents.assign(std::istreambuf_iterator<char>(file), {});
 	if (file.fail()) return {};
-	if (!pool.get(file_name)) {
-		std::vector<char> buffer(file_name.begin(), file_name.end());
-		file_name = pool.put(std::move(buffer), {});
-	}
+	if (!pool.get(file_name)) file_name = pool.put(file_name.to_string(), {});
 	return pool.put(std::move(contents), source_location{file_name, 1, 1});
 }
 
