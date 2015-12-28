@@ -4,6 +4,7 @@
 #include <utility>
 #include <vector>
 
+#include "optional.hpp"
 #include "string_pool.hpp"
 #include "string_view.hpp"
 
