@@ -23,17 +23,17 @@ inline bool operator!=(source_location const &a, source_location const &b) {
 
 std::ostream &operator<<(std::ostream &, source_location const &);
 
-struct source_map {
-	std::vector<std::pair<size_t, string_view>> sources;
-};
-
-struct source_origin {
-	source_location location;
-	source_map sources;
-
-	source_origin(source_location location = {}) : location(location) {}
-	source_origin(source_map sources) : sources(std::move(sources)) {}
-};
+namespace string_tracker_detail {
+	struct source_map {
+		std::vector<std::pair<size_t, string_view>> sources;
+	};
+	struct source_origin {
+		source_location location;
+		source_map sources;
+		source_origin(source_location location = {}) : location(location) {}
+		source_origin(source_map sources) : sources(std::move(sources)) {}
+	};
+}
 
 class string_tracker {
 public:
@@ -55,7 +55,7 @@ public:
 	private:
 		string_tracker &tracker;
 		std::string buffer;
-		source_map origin;
+		string_tracker_detail::source_map origin;
 
 		explicit string_builder(string_tracker &tracker) : tracker(tracker) {}
 
@@ -65,9 +65,9 @@ public:
 	string_builder builder() { return string_builder{*this}; }
 
 private:
-	string_pool<source_origin, std::string> pool;
+	string_pool<string_tracker_detail::source_origin, std::string> pool;
 
-	string_view add(std::string buffer, source_origin);
+	string_view add(std::string buffer, string_tracker_detail::source_origin);
 
-	source_origin origin(string_view s) const;
+	string_tracker_detail::source_origin origin(string_view s) const;
 };

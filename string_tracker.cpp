@@ -5,6 +5,8 @@
 
 #include "string_tracker.hpp"
 
+using namespace string_tracker_detail;
+
 std::ostream &operator<<(std::ostream &out, source_location const &l) {
 	out << (l.file_name.empty() ? "<unknown>" : l.file_name);
 	if (l.line) {
