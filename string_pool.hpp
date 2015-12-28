@@ -10,7 +10,7 @@ namespace string_pool_detail {
 
 	template<typename T>
 	inline void prevent_sso(std::basic_string<T> &s) {
-		s.reserve(sizeof(s));
+		if (s.capacity() < sizeof(s)) s.reserve(sizeof(s));
 	}
 
 	inline void prevent_sso(...) {}
