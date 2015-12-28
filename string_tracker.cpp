@@ -65,10 +65,6 @@ string_view string_tracker::add(std::string buffer, string_view origin) {
 	return pool.put(std::move(buffer), source_map{{{0, origin}}});
 }
 
-string_view string_tracker::add(std::string buffer, source_origin origin) {
-	return pool.put(std::move(buffer), std::move(origin));
-}
-
 source_origin string_tracker::origin(string_view s) const {
 	auto x = pool.get(s);
 	if (!x) return {};
@@ -109,5 +105,5 @@ void string_tracker::string_builder::append(string_view s, string_view o) {
 }
 
 string_view string_tracker::string_builder::build() {
-	return tracker.add(std::move(buffer), std::move(origin));
+	return tracker.pool.put(std::move(buffer), std::move(origin));
 }

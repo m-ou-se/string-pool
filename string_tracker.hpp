@@ -67,7 +67,5 @@ public:
 private:
 	string_pool<string_tracker_detail::source_origin, std::string> pool;
 
-	string_view add(std::string buffer, string_tracker_detail::source_origin);
-
 	string_tracker_detail::source_origin origin(string_view s) const;
 };
