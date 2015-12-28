@@ -26,13 +26,13 @@ namespace string_pool_detail {
  *
  * By default, this class uses std::string, but there's a small issue with std::string:
  * std::string isn't guaranteed to keep its .data() constant over moves, which this class relies on.
- * To work around that, s.resize(sizeof(s)) is applied to all strings, to prevent the only
+ * To work around that, the prevent_sso function above is applied to strings, to prevent the only
  * acceptable reason for std::string to not keep its .data() constant: small string optimization.
  * If you want to be absolutely sure, use std::vector<char> instead.
  *
  * M: The type of the metadata.
- * S: The string type to use.
- * V: The string_view type to use.
+ * S: The string type to use. (Default: std::string)
+ * V: The string_view type to use. (Default: string_view)
  */
 template<
 	typename M,
