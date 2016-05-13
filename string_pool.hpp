@@ -96,3 +96,60 @@ private:
 		return i;
 	}
 };
+
+template<typename S, typename V>
+class string_pool<void, S, V> {
+public:
+	using string = S;
+	using view = V;
+
+	/* Move a string into the pool.
+	 *
+	 * Takes the ownership of the string, and returns you a string_view to it.
+	 */
+	view put(string s) {
+		string_pool_detail::prevent_sso(s);
+		view v(s.data(), s.size());
+		pool_.emplace(v.data(), std::move(s));
+		return v;
+	}
+
+	/* Lookup a string in the pool.
+	 *
+	 * Returns a pointer to the original string that the view refers to.
+	 * (The view may be a substring.)
+	 * Returns nullptr if the view doesn't refer to any string inside this pool.
+	 */
+	string const *get(view s) const {
+		auto i = lookup(s);
+		if (i == pool_.end()) return nullptr;
+		return &i->second;
+	}
+
+	/* Take a string out of the pool.
+	 *
+	 * Behaves the same as get, but takes the string out of the pool
+	 * and returns it by value, giving you the ownership back.
+	 */
+	optional<string> take(view s) {
+		auto i = lookup(s);
+		if (i == pool_.end()) return {};
+		string e = std::move(i->second);
+		pool_.erase(i);
+		return std::move(e);
+	}
+
+private:
+	using pool_type_ = std::map<typename string::const_pointer, string>;
+
+	pool_type_ pool_;
+
+	typename pool_type_::const_iterator lookup(view s) const {
+		auto i = pool_.upper_bound(s.data());
+		if (i == pool_.begin()) return pool_.end();
+		--i;
+		std::size_t offset = s.data() - i->second.first.data();
+		if (offset > i->second.first.size()) return pool_.end();
+		return i;
+	}
+};
