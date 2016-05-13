@@ -8,9 +8,16 @@
 #include "string_pool.hpp"
 #include "string_view.hpp"
 
+// The location of a character in a text file.
 struct source_location {
+
+	// The file name, or empty if unknown.
 	string_view file_name;
+
+	// The line number, or 0 if unknown.
 	unsigned int line = 0;
+
+	// The column number, or 0 if unknown.
 	unsigned int column = 0;
 };
 
