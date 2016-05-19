@@ -65,19 +65,23 @@ string_view string_tracker::add(std::string buffer, string_view origin) {
 	return pool.put(std::move(buffer), source_map{{{0, origin}}});
 }
 
-source_origin string_tracker::origin(string_view s) const {
+std::pair<string_view, source_origin> string_tracker::origin(string_view s) const {
 	auto x = pool.get(s);
 	if (!x) return {};
 	string_view before_s(x->first.data(), s.data() - x->first.data());
-	return advance(x->second, before_s);
+	return {x->first, advance(x->second, before_s)};
 }
 
-source_location string_tracker::location(string_view s) const {
+string_tracker::get_result string_tracker::get(char const * s) const {
 	auto o = origin(s);
-	if (o.sources.sources.empty()) {
-		return o.location;
+	if (o.second.sources.sources.empty()) {
+		get_result result;
+		result.location = o.second.location;
+		result.original_source = o.first;
+		result.original_char = s;
+		return result;
 	} else {
-		return location(o.sources.sources.front().second);
+		return get(&o.second.sources.sources.front().second[0]);
 	}
 }
 

@@ -50,7 +50,20 @@ public:
 
 	optional<string_view> add_file(string_view file_name);
 
-	source_location location(string_view s) const;
+	struct get_result {
+		string_view original_source;
+		char const *original_char;
+		source_location location;
+	};
+
+	get_result get(char const *) const;
+
+	source_location location(string_view s) const {
+		return s.empty() ? source_location{} : location(&s[0]);
+	}
+	source_location location(char const * s) const {
+		return get(s).location;
+	}
 
 	struct string_builder {
 		void append(string_view);
@@ -75,5 +88,5 @@ public:
 private:
 	string_pool<string_tracker_detail::source_origin> pool;
 
-	string_tracker_detail::source_origin origin(string_view s) const;
+	std::pair<string_view, string_tracker_detail::source_origin> origin(string_view) const;
 };
