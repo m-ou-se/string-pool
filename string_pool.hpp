@@ -19,8 +19,8 @@ namespace string_pool_detail {
 
 /* Owns strings, so you can use string_views everywhere.
  *
- * Every string is together with some metadata, that can be looked up later using only the
- * string_view. That way, you don't have to copy/move the metadata around, but still access it when
+ * Every string is stored together with some metadata, that can be looked up later using only the
+ * string_view. That way, you don't have to copy/move the metadata around, but can still access it when
  * you need it. A good example of metadata you could store is the file name that the string was read
  * from, so you can report it in errors and warnings.
  *
