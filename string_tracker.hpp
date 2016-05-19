@@ -57,13 +57,10 @@ public:
 	};
 
 	get_result get(char const *) const;
+	get_result get(string_view s) const { return get(s.data()); }
 
-	source_location location(string_view s) const {
-		return s.empty() ? source_location{} : location(&s[0]);
-	}
-	source_location location(char const * s) const {
-		return get(s).location;
-	}
+	source_location location(string_view s) const { return get(s).location; }
+	source_location location(char const * s) const { return get(s).location; }
 
 	struct string_builder {
 		void append(string_view);
