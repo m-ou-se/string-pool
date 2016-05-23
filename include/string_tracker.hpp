@@ -66,6 +66,8 @@ public:
 		void append(string_view);
 		void append(string_view, string_view derived_from);
 
+		bool empty() const;
+
 		string_view build();
 
 		void reserve(size_t s) { buffer.reserve(s); }

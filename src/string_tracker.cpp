@@ -98,6 +98,10 @@ optional<string_view> string_tracker::add_file(string_view file_name) {
 	return pool.put(std::move(contents), source_location{file_name, 1, 1});
 }
 
+bool string_tracker::string_builder::empty() const {
+	return origin.sources.empty();
+}
+
 void string_tracker::string_builder::append(string_view s) {
 	origin.sources.emplace_back(buffer.size(), tracker.pool.get(s) ? s : string_view{});
 	buffer.insert(buffer.end(), s.begin(), s.end());
