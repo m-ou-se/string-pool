@@ -8,7 +8,7 @@
 using namespace string_tracker_detail;
 
 std::ostream &operator<<(std::ostream &out, source_location const &l) {
-	out << (l.file_name.empty() ? "<unknown>" : l.file_name);
+	out << (l.file_name.empty() ? "?" : l.file_name);
 	if (l.line) {
 		out << ':' << l.line;
 		if (l.column) out << ':' << l.column;
