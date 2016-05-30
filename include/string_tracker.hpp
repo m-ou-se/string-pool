@@ -19,6 +19,10 @@ struct source_location {
 
 	// The column number, or 0 if unknown.
 	unsigned int column = 0;
+
+	explicit operator bool() const {
+		return line || column || !file_name.empty();
+	}
 };
 
 inline bool operator==(source_location const &a, source_location const &b) {
