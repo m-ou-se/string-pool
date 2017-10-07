@@ -7,7 +7,7 @@ add_library(string_pool INTERFACE)
 target_include_directories(string_pool        INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
 target_include_directories(string_pool SYSTEM INTERFACE $<INSTALL_INTERFACE:${CMAKE_INSTALL_FULL_INCLUDEDIR}>)
 
-add_library(string_tracker STATIC
+add_library(string_tracker
 	src/string_tracker.cpp
 )
 target_link_libraries(string_tracker string_pool)
