@@ -3,8 +3,8 @@
 #include <map>
 #include <string>
 
-#include "optional.hpp"
-#include "string_view.hpp"
+#include <mstd/optional.hpp>
+#include <mstd/string_view.hpp>
 
 namespace string_pool {
 
@@ -39,7 +39,7 @@ namespace detail {
 template<
 	typename M,
 	typename S = std::string,
-	typename V = basic_string_view<typename S::value_type>
+	typename V = mstd::basic_string_view<typename S::value_type>
 >
 class string_pool {
 public:
@@ -76,7 +76,7 @@ public:
 	 * Behaves the same as get, but takes the string (and metadata) out of the pool
 	 * and returns it by value, giving you the ownership back.
 	 */
-	optional<entry> take(view s) {
+	mstd::optional<entry> take(view s) {
 		auto i = lookup(s);
 		if (i == pool_.end()) return {};
 		entry e = std::move(i->second);
@@ -133,7 +133,7 @@ public:
 	 * Behaves the same as get, but takes the string out of the pool
 	 * and returns it by value, giving you the ownership back.
 	 */
-	optional<string> take(view s) {
+	mstd::optional<string> take(view s) {
 		auto i = lookup(s);
 		if (i == pool_.end()) return {};
 		string e = std::move(i->second);

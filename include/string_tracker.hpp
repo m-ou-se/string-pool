@@ -4,9 +4,10 @@
 #include <utility>
 #include <vector>
 
-#include "optional.hpp"
+#include <mstd/optional.hpp>
+#include <mstd/string_view.hpp>
+
 #include "string_pool.hpp"
-#include "string_view.hpp"
 
 namespace string_pool {
 
@@ -14,7 +15,7 @@ namespace string_pool {
 struct source_location {
 
 	// The file name, or empty if unknown.
-	string_view file_name;
+	mstd::string_view file_name;
 
 	// The line number, or 0 if unknown.
 	unsigned int line = 0;
@@ -39,7 +40,7 @@ std::ostream &operator<<(std::ostream &, source_location const &);
 
 namespace impl_detail {
 	struct source_map {
-		std::vector<std::pair<size_t, string_view>> sources;
+		std::vector<std::pair<size_t, mstd::string_view>> sources;
 	};
 	struct source_origin {
 		source_location location;
@@ -51,30 +52,30 @@ namespace impl_detail {
 
 class string_tracker {
 public:
-	string_view add(std::string, source_location = {});
-	string_view add(std::string, string_view derived_from);
+	mstd::string_view add(std::string, source_location = {});
+	mstd::string_view add(std::string, mstd::string_view derived_from);
 
-	optional<string_view> add_file(string_view file_name);
+	mstd::optional<mstd::string_view> add_file(mstd::string_view file_name);
 
 	struct get_result {
-		string_view original_source;
+		mstd::string_view original_source;
 		char const *original_char;
 		source_location location;
 	};
 
 	get_result get(char const *) const;
-	get_result get(string_view s) const { return get(s.data()); }
+	get_result get(mstd::string_view s) const { return get(s.data()); }
 
-	source_location location(string_view s) const { return get(s).location; }
+	source_location location(mstd::string_view s) const { return get(s).location; }
 	source_location location(char const * s) const { return get(s).location; }
 
 	struct string_builder {
-		void append(string_view);
-		void append(string_view, string_view derived_from);
+		void append(mstd::string_view);
+		void append(mstd::string_view, mstd::string_view derived_from);
 
 		bool empty() const;
 
-		string_view build();
+		mstd::string_view build();
 
 		void reserve(size_t s) { buffer.reserve(s); }
 
@@ -93,7 +94,7 @@ public:
 private:
 	string_pool<impl_detail::source_origin> pool;
 
-	std::pair<string_view, impl_detail::source_origin> origin(string_view) const;
+	std::pair<mstd::string_view, impl_detail::source_origin> origin(mstd::string_view) const;
 };
 
 }

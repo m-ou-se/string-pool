@@ -5,6 +5,9 @@
 
 #include "string_tracker.hpp"
 
+using mstd::optional;
+using mstd::string_view;
+
 namespace string_pool {
 
 using namespace impl_detail;

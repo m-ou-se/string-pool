@@ -4,6 +4,7 @@ project(stringpool)
 include(GNUInstallDirs)
 
 add_library(string_pool INTERFACE)
+target_link_libraries(string_pool INTERFACE mstd)
 target_include_directories(string_pool        INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
 target_include_directories(string_pool SYSTEM INTERFACE $<INSTALL_INTERFACE:${CMAKE_INSTALL_FULL_INCLUDEDIR}>)
 
