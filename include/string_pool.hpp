@@ -6,7 +6,9 @@
 #include "optional.hpp"
 #include "string_view.hpp"
 
-namespace string_pool_detail {
+namespace string_pool {
+
+namespace detail {
 
 	template<typename T>
 	inline void prevent_sso(std::basic_string<T> &s) {
@@ -51,7 +53,7 @@ public:
 	 * Takes the ownership of the string, and returns you a string_view to it.
 	 */
 	view put(string s, metadata m) {
-		string_pool_detail::prevent_sso(s);
+		detail::prevent_sso(s);
 		view v(s.data(), s.size());
 		pool_.emplace(v.data(), entry{std::move(s), std::move(m)});
 		return v;
@@ -108,7 +110,7 @@ public:
 	 * Takes the ownership of the string, and returns you a string_view to it.
 	 */
 	view put(string s) {
-		string_pool_detail::prevent_sso(s);
+		detail::prevent_sso(s);
 		view v(s.data(), s.size());
 		pool_.emplace(v.data(), std::move(s));
 		return v;
@@ -153,3 +155,5 @@ private:
 		return i;
 	}
 };
+
+}

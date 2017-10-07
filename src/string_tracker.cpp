@@ -5,7 +5,9 @@
 
 #include "string_tracker.hpp"
 
-using namespace string_tracker_detail;
+namespace string_pool {
+
+using namespace impl_detail;
 
 std::ostream &operator<<(std::ostream &out, source_location const &l) {
 	out << (l.file_name.empty() ? "?" : l.file_name);
@@ -114,4 +116,6 @@ void string_tracker::string_builder::append(string_view s, string_view o) {
 
 string_view string_tracker::string_builder::build() {
 	return tracker.pool.put(std::move(buffer), std::move(origin));
+}
+
 }

@@ -8,6 +8,8 @@
 #include "string_pool.hpp"
 #include "string_view.hpp"
 
+namespace string_pool {
+
 // The location of a character in a text file.
 struct source_location {
 
@@ -35,7 +37,7 @@ inline bool operator!=(source_location const &a, source_location const &b) {
 
 std::ostream &operator<<(std::ostream &, source_location const &);
 
-namespace string_tracker_detail {
+namespace impl_detail {
 	struct source_map {
 		std::vector<std::pair<size_t, string_view>> sources;
 	};
@@ -79,7 +81,7 @@ public:
 	private:
 		string_tracker &tracker;
 		std::string buffer;
-		string_tracker_detail::source_map origin;
+		impl_detail::source_map origin;
 
 		explicit string_builder(string_tracker &tracker) : tracker(tracker) {}
 
@@ -89,7 +91,9 @@ public:
 	string_builder builder() { return string_builder{*this}; }
 
 private:
-	string_pool<string_tracker_detail::source_origin> pool;
+	string_pool<impl_detail::source_origin> pool;
 
-	std::pair<string_view, string_tracker_detail::source_origin> origin(string_view) const;
+	std::pair<string_view, impl_detail::source_origin> origin(string_view) const;
 };
+
+}
