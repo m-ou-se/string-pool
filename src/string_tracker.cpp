@@ -91,7 +91,8 @@ string_tracker::get_result string_tracker::get(char const * s) const {
 }
 
 optional<string_view> string_tracker::add_file(string_view file_name) {
-	std::ifstream file{file_name.to_string()};
+	std::string file_name_str(file_name);
+	std::ifstream file{file_name_str};
 	file.seekg(0, std::ios_base::end);
 	std::ifstream::pos_type file_size = file.tellg();
 	std::string contents;
@@ -99,7 +100,7 @@ optional<string_view> string_tracker::add_file(string_view file_name) {
 	file.seekg(0, std::ios_base::beg);
 	contents.assign(std::istreambuf_iterator<char>(file), {});
 	if (file.fail()) return {};
-	if (!pool.get(file_name)) file_name = pool.put(file_name.to_string(), {});
+	if (!pool.get(file_name)) file_name = pool.put(std::move(file_name_str), {});
 	return pool.put(std::move(contents), source_location{file_name, 1, 1});
 }
 
