@@ -1,2 +1,2 @@
-example: example.cpp ../string_tracker.cpp ../string_tracker.hpp ../string_pool.hpp
-	$(CXX) -std=c++1z -Wall -Wextra example.cpp ../string_tracker.cpp -I.. -o$@
+example: example.cpp ../src/string_tracker.cpp ../include/string_tracker.hpp ../include/string_pool.hpp
+	$(CXX) -std=c++1z -Wall -Wextra example.cpp ../src/string_tracker.cpp -I.. -o$@

@@ -5,7 +5,7 @@
 #include "../include/string_tracker.hpp"
 
 int main() {
-	string_tracker p;
+	string_pool::string_tracker p;
 
 	std::optional<std::string_view> f1 = p.add_file("example-input-1");
 	std::optional<std::string_view> f2 = p.add_file("example-input-2");
