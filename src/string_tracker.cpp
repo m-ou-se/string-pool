@@ -3,7 +3,7 @@
 #include <iostream>
 #include <vector>
 
-#include "string_tracker.hpp"
+#include "../include/string_tracker.hpp"
 
 namespace string_pool {
 

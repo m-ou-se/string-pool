@@ -2,7 +2,7 @@
 #include <optional>
 #include <string_view>
 
-#include "string_tracker.hpp"
+#include "../include/string_tracker.hpp"
 
 int main() {
 	string_tracker p;
