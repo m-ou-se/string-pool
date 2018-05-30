@@ -1,4 +1,1 @@
-include(CMakeFindDependencyMacro)
-find_dependency(mstd)
-
 include(${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@.cmake)

@@ -5,9 +5,6 @@
 
 #include "string_tracker.hpp"
 
-using mstd::optional;
-using mstd::string_view;
-
 namespace string_pool {
 
 using namespace impl_detail;
@@ -23,7 +20,7 @@ std::ostream &operator<<(std::ostream &out, source_location const &l) {
 	return out;
 }
 
-source_location advance(source_location location, string_view s) {
+source_location advance(source_location location, std::string_view s) {
 	unsigned int n_newlines = 0;
 	char const *last_newline = nullptr;
 	for (char const &c : s) {
@@ -45,7 +42,7 @@ source_map advance(source_map const &map, size_t s) {
 	auto i = std::prev(std::upper_bound(
 		map.sources.begin(),
 		map.sources.end(),
-		std::make_pair(s, string_view{}),
+		std::make_pair(s, std::string_view{}),
 		[] (auto const &a, auto const &b) { return a.first < b.first; }
 	));
 	source_map result;
@@ -54,7 +51,7 @@ source_map advance(source_map const &map, size_t s) {
 	return result;
 }
 
-source_origin advance(source_origin const &origin, string_view s) {
+source_origin advance(source_origin const &origin, std::string_view s) {
 	if (origin.sources.sources.empty()) {
 		return advance(origin.location, s);
 	} else {
@@ -62,18 +59,18 @@ source_origin advance(source_origin const &origin, string_view s) {
 	}
 }
 
-string_view string_tracker::add(std::string buffer, source_location origin) {
+std::string_view string_tracker::add(std::string buffer, source_location origin) {
 	return pool.put(std::move(buffer), std::move(origin));
 }
 
-string_view string_tracker::add(std::string buffer, string_view origin) {
+std::string_view string_tracker::add(std::string buffer, std::string_view origin) {
 	return pool.put(std::move(buffer), source_map{{{0, origin}}});
 }
 
-std::pair<string_view, source_origin> string_tracker::origin(string_view s) const {
+std::pair<std::string_view, source_origin> string_tracker::origin(std::string_view s) const {
 	auto x = pool.get(s);
 	if (!x) return {};
-	string_view before_s(x->first.data(), s.data() - x->first.data());
+	std::string_view before_s(x->first.data(), s.data() - x->first.data());
 	return {x->first, advance(x->second, before_s)};
 }
 
@@ -90,7 +87,7 @@ string_tracker::get_result string_tracker::get(char const * s) const {
 	}
 }
 
-optional<string_view> string_tracker::add_file(string_view file_name) {
+std::optional<std::string_view> string_tracker::add_file(std::string_view file_name) {
 	std::string file_name_str(file_name);
 	std::ifstream file{file_name_str};
 	file.seekg(0, std::ios_base::end);
@@ -108,17 +105,17 @@ bool string_tracker::string_builder::empty() const {
 	return origin.sources.empty();
 }
 
-void string_tracker::string_builder::append(string_view s) {
-	origin.sources.emplace_back(buffer.size(), tracker.pool.get(s) ? s : string_view{});
+void string_tracker::string_builder::append(std::string_view s) {
+	origin.sources.emplace_back(buffer.size(), tracker.pool.get(s) ? s : std::string_view{});
 	buffer.insert(buffer.end(), s.begin(), s.end());
 }
 
-void string_tracker::string_builder::append(string_view s, string_view o) {
+void string_tracker::string_builder::append(std::string_view s, std::string_view o) {
 	origin.sources.emplace_back(buffer.size(), o);
 	buffer.insert(buffer.end(), s.begin(), s.end());
 }
 
-string_view string_tracker::string_builder::build() {
+std::string_view string_tracker::string_builder::build() {
 	return tracker.pool.put(std::move(buffer), std::move(origin));
 }
 
